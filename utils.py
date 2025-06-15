@@ -102,3 +102,31 @@ def get_all_projects_as_dataframe(url_base):
     df = pd.DataFrame(all_projects)
     print(f"Fetched {len(df)} projects")
     return df
+
+
+
+
+
+def get_units_dataframe(base_url, org_uid, limit=500):
+    """
+    Fetches all retired units for a given organization UID from a paginated API endpoint and returns them as a pandas DataFrame.
+    """
+    page = 1
+    all_units = []
+    while True:
+        url = f"{base_url}?page={page}&limit={limit}&orgUid={org_uid}"
+        response = requests.get(url)
+        if response.status_code != 200:
+            print(f"Failed to fetch data: {response.status_code}")
+            break
+        data = response.json()
+        units = data.get("data", [])
+        retired_units = [unit for unit in units if unit.get("unitStatus") == "Issued"]
+        all_units.extend(retired_units)
+        if page >= data.get("pageCount", 0):
+            break
+        page += 1
+    # df_held_units = pd.DataFrame(all_units)
+    return all_units
+    return df_held_units
+    
