@@ -114,19 +114,20 @@ def get_units_dataframe(base_url, org_uid, limit=500):
     page = 1
     all_units = []
     while True:
-        url = f"{base_url}?page={page}&limit={limit}&orgUid={org_uid}"
+        url = f"{base_url}/v1/units?page={page}&limit={limit}&orgUid={org_uid}"
         response = requests.get(url)
         if response.status_code != 200:
             print(f"Failed to fetch data: {response.status_code}")
             break
         data = response.json()
         units = data.get("data", [])
-        retired_units = [unit for unit in units if unit.get("unitStatus") == "Issued"]
-        all_units.extend(retired_units)
+        # retired_units = [unit for unit in units if unit.get("unitStatus") == "Issued"]
+        all_units.extend(units)
         if page >= data.get("pageCount", 0):
             break
+        print(f"Fetched {len(units)} units from page {page}")
         page += 1
     # df_held_units = pd.DataFrame(all_units)
     return all_units
-    return df_held_units
+   
     
